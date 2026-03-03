@@ -153,8 +153,9 @@ export const stats = query({
     // currentMaxes: most recent topWeight per mainLift
     const currentMaxes: Record<string, number> = {};
     for (const w of allWorkouts) {
+      if (!w.workout) continue;
       const lift = w.workout.mainLift;
-      if (!(lift in currentMaxes)) {
+      if (lift && !(lift in currentMaxes) && w.workout.topWeight) {
         currentMaxes[lift] = w.workout.topWeight;
       }
     }
@@ -178,13 +179,14 @@ export const stats = query({
     // totalVolume: sum of (reps * weight) across all sets
     let totalVolume = 0;
     for (const w of allWorkouts) {
+      if (!w.workout?.sets) continue;
       for (const set of w.workout.sets) {
         const reps = typeof set.reps === "number" ? set.reps : Number.parseFloat(set.reps) || 0;
         const weight =
           typeof set.weight === "number" ? set.weight : Number.parseFloat(set.weight) || 0;
         totalVolume += reps * weight;
       }
-      if (w.workout.accessories) {
+      if (w.workout?.accessories) {
         for (const acc of w.workout.accessories) {
           const reps = typeof acc.reps === "number" ? acc.reps : Number.parseFloat(acc.reps) || 0;
           const weight =
@@ -237,9 +239,10 @@ export const stats = query({
     // Process oldest first for PR tracking
     const chronological = [...allWorkouts].reverse();
     for (const w of chronological) {
+      if (!w.workout) continue;
       const lift = w.workout.mainLift;
       const weight = w.workout.topWeight;
-      if (!(lift in maxSoFar) || weight > maxSoFar[lift]) {
+      if (lift && weight && (!(lift in maxSoFar) || weight > maxSoFar[lift])) {
         maxSoFar[lift] = weight;
         prHistory.push({ date: w.date, lift, weight });
       }

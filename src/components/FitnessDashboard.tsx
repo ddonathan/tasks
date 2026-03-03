@@ -354,11 +354,11 @@ export default function FitnessDashboard() {
     const sorted = [...workouts].sort((a, b) => (a.date > b.date ? 1 : a.date < b.date ? -1 : 0));
 
     return LIFTS.map((lift) => {
-      const filtered = sorted.filter((w) => w.workout.mainLift === lift);
+      const filtered = sorted.filter((w) => w.workout?.mainLift === lift);
       return {
         lift,
         labels: filtered.map((w) => formatDate(w.date)),
-        data: filtered.map((w) => w.workout.topWeight),
+        data: filtered.map((w) => w.workout?.topWeight ?? 0),
         color: LIFT_COLORS[lift],
       };
     });
@@ -483,6 +483,7 @@ export default function FitnessDashboard() {
           </thead>
           <tbody>
             {recentWorkouts.map((w) => {
+              if (!w.workout) return null;
               const liftName = w.workout.mainLift as Lift;
               const color = LIFT_COLORS[liftName] ?? "#6366f1";
               return (
@@ -491,8 +492,8 @@ export default function FitnessDashboard() {
                   <td style={styles.td}>
                     <span style={styles.badge(color)}>{LIFT_SHORT[liftName] ?? liftName}</span>
                   </td>
-                  <td style={styles.td}>{w.workout.topWeight} lbs</td>
-                  <td style={styles.td}>{w.workout.felt}</td>
+                  <td style={styles.td}>{w.workout?.topWeight} lbs</td>
+                  <td style={styles.td}>{w.workout?.felt}</td>
                 </tr>
               );
             })}
