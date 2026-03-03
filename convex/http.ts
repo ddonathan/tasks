@@ -1,7 +1,7 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import type { Id } from "./_generated/dataModel";
 
 const http = httpRouter();
 
@@ -25,7 +25,7 @@ function error(message: string, status: number): Response {
 }
 
 function authorize(request: Request): boolean {
-  const key = process.env.MIRA_API_KEY;
+  const key = globalThis.process?.env?.MIRA_API_KEY;
   if (!key) return false;
   const header = request.headers.get("Authorization");
   return header === `Bearer ${key}`;
