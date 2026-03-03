@@ -1,7 +1,7 @@
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type Page = "tasks" | "tags";
+type Page = "tasks" | "tags" | "fitness" | "bodycomp";
 
 export default function NavMenu({
   activePage,
@@ -25,9 +25,9 @@ export default function NavMenu({
   const menuItems = [
     { id: "tasks" as Page, label: "Tasks", icon: "\u{1F4CB}", enabled: true },
     { id: "tags" as Page, label: "Tags", icon: "\u{1F3F7}\uFE0F", enabled: true },
+    { id: "fitness" as Page, label: "Big Four No Dread", icon: "\u{1F3CB}\uFE0F", enabled: true },
+    { id: "bodycomp" as Page, label: "Body Composition", icon: "\u{1F4CA}", enabled: true },
     { id: "blood-labs", label: "Blood Labs", icon: "\u{1FA78}", enabled: false },
-    { id: "body-comp", label: "Body Composition", icon: "\u{1F4CA}", enabled: false },
-    { id: "fitness", label: "Fitness", icon: "\u{1F3CB}\uFE0F", enabled: false },
     { id: "contacts", label: "Contacts", icon: "\u{1F465}", enabled: false },
   ];
 

@@ -14,7 +14,7 @@ import TagsManager from "./components/TagsManager";
 import TaskDetail from "./components/TaskDetail";
 
 type View = "kanban" | "list";
-type Page = "tasks" | "tags";
+type Page = "tasks" | "tags" | "fitness" | "bodycomp";
 
 export default function App() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -68,7 +68,12 @@ function AuthenticatedApp({ signOut }: { signOut: () => Promise<void> }) {
       <header className="app-header">
         <NavMenu activePage={page} onNavigate={setPage} />
 
-        <h1>{page === "tasks" ? "Tasks" : "Tags"}</h1>
+        <h1>
+          {page === "tasks" && "Tasks"}
+          {page === "tags" && "Tags"}
+          {page === "fitness" && "Big Four No Dread"}
+          {page === "bodycomp" && "Body Composition"}
+        </h1>
 
         {page === "tasks" && (
           <>
@@ -153,8 +158,19 @@ function AuthenticatedApp({ signOut }: { signOut: () => Promise<void> }) {
           {/* Quick capture FAB */}
           <QuickCapture />
         </>
-      ) : (
+      ) : page === "tags" ? (
         <TagsManager />
+      ) : (
+        <iframe
+          src={page === "fitness" ? "/fitness.html" : "/bodycomp.html"}
+          title={page === "fitness" ? "Big Four No Dread" : "Body Composition"}
+          style={{
+            width: "100%",
+            height: "calc(100vh - 60px)",
+            border: "none",
+            background: "#0f1117",
+          }}
+        />
       )}
     </>
   );
