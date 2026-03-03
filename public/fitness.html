@@ -393,7 +393,7 @@ async function loadAll() {
     const files = fileList.filter(f => f.endsWith('.json'));
     const promises = files.map(f => fetch(`/fitness-data/${f}`).then(r => r.json()).catch(() => null));
     const results = await Promise.all(promises);
-    workouts = results.filter(Boolean).sort((a, b) => a.date.localeCompare(b.date));
+    workouts = results.filter(r => r && r.date).sort((a, b) => a.date.localeCompare(b.date));
 
     render();
   } catch (e) {
