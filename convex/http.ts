@@ -301,6 +301,32 @@ http.route({
   }),
 });
 
+// ---------- DELETE /api/tasks ----------
+
+http.route({
+  path: "/api/tasks",
+  method: "DELETE",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.id || typeof body.id !== "string") {
+      return error("id is required and must be a string", 400);
+    }
+
+    const id = await ctx.runMutation(api.tasks.remove, {
+      id: body.id as Id<"tasks">,
+    });
+    return json({ id, deleted: true });
+  }),
+});
+
 // ---------- CORS preflight for webhooks ----------
 
 http.route({

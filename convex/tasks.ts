@@ -179,6 +179,16 @@ export const update = mutation({
   },
 });
 
+export const remove = mutation({
+  args: { id: v.id("tasks") },
+  handler: async (ctx, args) => {
+    const task = await ctx.db.get(args.id);
+    if (!task) throw new Error("Task not found");
+    await ctx.db.delete(args.id);
+    return args.id;
+  },
+});
+
 export const move = mutation({
   args: {
     id: v.id("tasks"),
