@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as bloodlabs from "../bloodlabs.js";
 import type * as bodycomp from "../bodycomp.js";
 import type * as http from "../http.js";
 import type * as tags from "../tags.js";
@@ -24,6 +25,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  bloodlabs: typeof bloodlabs;
   bodycomp: typeof bodycomp;
   http: typeof http;
   tags: typeof tags;

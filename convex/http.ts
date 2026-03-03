@@ -1,6 +1,6 @@
 /// <reference path="env.d.ts" />
 import { httpRouter } from "convex/server";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { httpAction } from "./_generated/server";
 import { auth } from "./auth";
@@ -801,7 +801,7 @@ http.route({
             thighs?: number;
           }
         | undefined,
-      photos: body.photos as string[] | undefined,
+      photos: body.photos as Id<"_storage">[] | undefined,
       notes: body.notes as string | undefined,
       time: body.time as string | undefined,
     });
@@ -847,7 +847,7 @@ http.route({
             thighs?: number;
           }
         | undefined,
-      photos: body.photos as string[] | undefined,
+      photos: body.photos as Id<"_storage">[] | undefined,
       notes: body.notes as string | undefined,
       time: body.time as string | undefined,
     });
@@ -892,6 +892,44 @@ http.route({
 
     const stats = await ctx.runQuery(api.bodycomp.stats, {});
     return json(stats);
+  }),
+});
+
+// ---------- CORS preflight for bodycomp photos ----------
+
+http.route({
+  path: "/api/bodycomp/photos",
+  method: "OPTIONS",
+  handler: httpAction(async () => {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }),
+});
+
+// ---------- POST /api/bodycomp/photos ----------
+
+http.route({
+  path: "/api/bodycomp/photos",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    const url = new URL(request.url);
+    const date = url.searchParams.get("date");
+    if (!date) {
+      return error("date query parameter is required", 400);
+    }
+
+    const formData = await request.formData();
+    const file = formData.get("file");
+    if (!file || !(file instanceof Blob)) {
+      return error("file field is required in multipart form data", 400);
+    }
+
+    const storageId = await ctx.storage.store(file);
+    await ctx.runMutation(internal.bodycomp.addPhoto, { date, storageId });
+
+    const storageUrl = await ctx.storage.getUrl(storageId);
+    return json({ storageId, url: storageUrl }, 201);
   }),
 });
 

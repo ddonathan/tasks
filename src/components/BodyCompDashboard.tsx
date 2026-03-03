@@ -12,6 +12,7 @@ import { useMutation, useQuery } from "convex/react";
 import { type FormEvent, useMemo, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { api } from "../../convex/_generated/api";
+import type { Id } from "../../convex/_generated/dataModel";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Filler);
 
@@ -447,18 +448,52 @@ export default function BodyCompDashboard() {
     };
   }, [entries]);
 
-  // Photo entries
+  // Collect all photo storage IDs from entries
+  const allPhotoIds = useMemo(() => {
+    if (!entries) return [];
+    const ids: Id<"_storage">[] = [];
+    for (const e of entries) {
+      if (e.photos) {
+        for (const id of e.photos) {
+          ids.push(id);
+        }
+      }
+    }
+    return ids;
+  }, [entries]);
+
+  const photoUrls = useQuery(
+    api.bodycomp.getPhotoUrls,
+    allPhotoIds.length > 0 ? { ids: allPhotoIds } : "skip",
+  );
+
+  // Build a map from storageId -> resolved URL
+  const photoUrlMap = useMemo(() => {
+    if (!allPhotoIds.length || !photoUrls) return new Map<string, string>();
+    const map = new Map<string, string>();
+    for (let i = 0; i < allPhotoIds.length; i++) {
+      const url = photoUrls[i];
+      if (url) {
+        map.set(allPhotoIds[i], url);
+      }
+    }
+    return map;
+  }, [allPhotoIds, photoUrls]);
+
+  // Photo entries with resolved URLs
   const photoEntries = useMemo(() => {
     if (!entries) return [];
     return entries
       .filter((e) => e.photos && e.photos.length > 0)
       .flatMap((e) =>
-        (e.photos ?? []).map((photo) => ({
+        (e.photos ?? []).map((storageId) => ({
           date: e.date,
-          photo,
+          storageId,
+          url: photoUrlMap.get(storageId) ?? null,
         })),
-      );
-  }, [entries]);
+      )
+      .filter((p) => p.url !== null);
+  }, [entries, photoUrlMap]);
 
   // Goal progress
   const goalProgress = useMemo(() => {
@@ -636,9 +671,9 @@ export default function BodyCompDashboard() {
         <>
           <div style={styles.sectionTitle}>Progress Photos</div>
           <div style={styles.photoGrid}>
-            {photoEntries.map(({ date, photo }) => (
-              <div key={`${date}-${photo}`} style={styles.photoCard}>
-                <img src={`/${photo}`} alt={`Progress ${date}`} style={styles.photoImg} />
+            {photoEntries.map(({ date, storageId, url }) => (
+              <div key={`${date}-${storageId}`} style={styles.photoCard}>
+                <img src={url as string} alt={`Progress ${date}`} style={styles.photoImg} />
                 <div style={styles.photoCaption}>{formatDate(date)}</div>
               </div>
             ))}

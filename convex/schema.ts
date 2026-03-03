@@ -124,7 +124,7 @@ export default defineSchema({
         thighs: v.optional(v.float64()),
       }),
     ),
-    photos: v.optional(v.array(v.string())),
+    photos: v.optional(v.array(v.any())),
     notes: v.optional(v.string()),
     time: v.optional(v.string()),
   }).index("by_date", ["date"]),

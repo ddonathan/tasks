@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 
 export const list = query({
   args: {
@@ -50,7 +50,7 @@ export const create = mutation({
         thighs: v.optional(v.float64()),
       }),
     ),
-    photos: v.optional(v.array(v.string())),
+    photos: v.optional(v.array(v.id("_storage"))),
     notes: v.optional(v.string()),
     time: v.optional(v.string()),
   },
@@ -112,7 +112,7 @@ export const update = mutation({
         thighs: v.optional(v.float64()),
       }),
     ),
-    photos: v.optional(v.array(v.string())),
+    photos: v.optional(v.array(v.id("_storage"))),
     notes: v.optional(v.string()),
     time: v.optional(v.string()),
   },
@@ -219,5 +219,44 @@ export const recent = query({
     const entries = await ctx.db.query("bodycomp").collect();
     entries.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
     return entries.slice(0, limit);
+  },
+});
+
+export const addPhoto = internalMutation({
+  args: {
+    date: v.string(),
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    const existing = await ctx.db
+      .query("bodycomp")
+      .withIndex("by_date", (q) => q.eq("date", args.date))
+      .first();
+
+    if (existing) {
+      const photos = existing.photos ?? [];
+      await ctx.db.patch(existing._id, { photos: [...photos, args.storageId] });
+      return existing._id;
+    }
+
+    const id = await ctx.db.insert("bodycomp", {
+      date: args.date,
+      photos: [args.storageId],
+    });
+    return id;
+  },
+});
+
+export const getPhotoUrls = query({
+  args: {
+    ids: v.array(v.id("_storage")),
+  },
+  handler: async (ctx, args) => {
+    const urls: (string | null)[] = [];
+    for (const id of args.ids) {
+      const url = await ctx.storage.getUrl(id);
+      urls.push(url);
+    }
+    return urls;
   },
 });
