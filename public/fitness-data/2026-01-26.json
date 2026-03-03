@@ -1,0 +1,56 @@
+{
+  "date": "2026-01-26",
+  "workout": {
+    "mainLift": "Overhead Press",
+    "topWeight": 67.5,
+    "sets": [
+      {
+        "exercise": "Overhead Press",
+        "reps": 8,
+        "weight": 67.5
+      },
+      {
+        "exercise": "Overhead Press",
+        "reps": 12,
+        "weight": 54
+      },
+      {
+        "exercise": "Overhead Press",
+        "reps": 12,
+        "weight": 54
+      },
+      {
+        "exercise": "Romanian Deadlift (DB)",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Romanian Deadlift (DB)",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Romanian Deadlift (DB)",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Overhead Extension (BB) (BFR)",
+        "reps": 15,
+        "weight": 15
+      },
+      {
+        "exercise": "Overhead Extension (BB) (BFR)",
+        "reps": 15,
+        "weight": 15
+      },
+      {
+        "exercise": "Overhead Extension (BB) (BFR)",
+        "reps": 15,
+        "weight": 15
+      }
+    ],
+    "startTime": "2026-01-26T14:00:00.000Z"
+  },
+  "notes": "Felt: Could have done two more"
+}

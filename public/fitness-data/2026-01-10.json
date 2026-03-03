@@ -1,0 +1,56 @@
+{
+  "date": "2026-01-10",
+  "workout": {
+    "mainLift": "Squat",
+    "topWeight": 100,
+    "sets": [
+      {
+        "exercise": "Squat",
+        "reps": 8,
+        "weight": 100
+      },
+      {
+        "exercise": "Squat",
+        "reps": 12,
+        "weight": 80
+      },
+      {
+        "exercise": "Squat",
+        "reps": 12,
+        "weight": 80
+      },
+      {
+        "exercise": "Chin-ups",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "Chin-ups",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "Chin-ups",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "Close-Grip Bench",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Close-Grip Bench",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Close-Grip Bench",
+        "reps": 15,
+        "weight": 57
+      }
+    ],
+    "startTime": "2026-01-10T14:00:00.000Z"
+  },
+  "notes": "Felt: Could have done two more\nAccessory load: Green + Purple"
+}

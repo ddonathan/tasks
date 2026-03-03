@@ -472,14 +472,14 @@ async function loadData() {
   const basePath = window.location.pathname.replace(/\/?$/, '/');
   // Try loading from data/ directory via fetch (works with local server)
   try {
-    const resp = await fetch(`${basePath}data/`);
+    const resp = await fetch(`/bodycomp-data/`);
     if (resp.ok) {
       const text = await resp.text();
       const files = [...text.matchAll(/href="([^"]+\.json)"/g)].map(m => m[1]);
       const entries = [];
       for (const f of files) {
         try {
-          const r = await fetch(`${basePath}data/${f}`);
+          const r = await fetch(`/bodycomp-data/${f}`);
           if (r.ok) entries.push(await r.json());
         } catch(e) {}
       }
@@ -545,7 +545,7 @@ function submitLog() {
   // Also try to save to file system (only works with server)
   try {
     const savePath = window.location.pathname.replace(/\/?$/, '/');
-    fetch(`${savePath}data/${date}.json`, {
+    fetch(`/bodycomp-data/${date}.json`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(entry, null, 2)

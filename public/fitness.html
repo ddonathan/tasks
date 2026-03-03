@@ -436,8 +436,8 @@ async function loadAll() {
   try {
     // Load data files, schedule, and program in parallel
     const [fileListText, programResp] = await Promise.all([
-      fetch('data/').then(r => r.text()),
-      fetch('program.json').then(r => r.json())
+      fetch('/fitness-data/').then(r => r.text()),
+      fetch('/program.json').then(r => r.json())
     ]);
 
     program = programResp;
@@ -450,7 +450,7 @@ async function loadAll() {
       // HTML directory listing: extract href="*.json" links
       files = [...fileListText.matchAll(/href="([^"]+\.json)"/g)].map(m => m[1]);
     }
-    const promises = files.map(f => fetch(`data/${f}`).then(r => r.json()).catch(() => null));
+    const promises = files.map(f => fetch(`/fitness-data/${f}`).then(r => r.json()).catch(() => null));
     const results = await Promise.all(promises);
     workouts = results.filter(Boolean).sort((a, b) => a.date.localeCompare(b.date));
 

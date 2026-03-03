@@ -1,0 +1,16 @@
+{
+  "date": "2026-01-23",
+  "weight": 193.8,
+  "bf": 22.9,
+  "smm": 85.3,
+  "bfm": 44.3,
+  "bmi": 24.9,
+  "score": 74,
+  "measurements": {},
+  "photos": [
+    "photos/2026-01-23/back.jpg",
+    "photos/2026-01-23/front.jpg",
+    "photos/2026-01-23/side.jpg"
+  ],
+  "notes": ""
+}

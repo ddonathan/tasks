@@ -1,0 +1,56 @@
+{
+  "date": "2026-01-12",
+  "workout": {
+    "mainLift": "Overhead Press",
+    "topWeight": 62.5,
+    "sets": [
+      {
+        "exercise": "Overhead Press",
+        "reps": 8,
+        "weight": 62.5
+      },
+      {
+        "exercise": "Overhead Press",
+        "reps": 12,
+        "weight": 50
+      },
+      {
+        "exercise": "Overhead Press",
+        "reps": 12,
+        "weight": 50
+      },
+      {
+        "exercise": "Half sprint 200/400m loaded",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "Half sprint 200/400m loaded",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "Half sprint 200/400m loaded",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "Farmer’s Carry (DB)",
+        "reps": 15,
+        "weight": 30
+      },
+      {
+        "exercise": "Farmer’s Carry (DB)",
+        "reps": 15,
+        "weight": 30
+      },
+      {
+        "exercise": "Farmer’s Carry (DB)",
+        "reps": 15,
+        "weight": 30
+      }
+    ],
+    "startTime": "2026-01-12T14:00:00.000Z"
+  },
+  "notes": "Felt: Could have done two more"
+}

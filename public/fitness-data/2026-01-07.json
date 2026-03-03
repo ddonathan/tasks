@@ -1,0 +1,56 @@
+{
+  "date": "2026-01-07",
+  "workout": {
+    "mainLift": "Deadlift",
+    "topWeight": 100,
+    "sets": [
+      {
+        "exercise": "Deadlift",
+        "reps": 8,
+        "weight": 100
+      },
+      {
+        "exercise": "Deadlift",
+        "reps": 12,
+        "weight": 80
+      },
+      {
+        "exercise": "Deadlift",
+        "reps": 12,
+        "weight": 80
+      },
+      {
+        "exercise": "Romanian Deadlift (DB)",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Romanian Deadlift (DB)",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Romanian Deadlift (DB)",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Shrug (BB) (BFR)",
+        "reps": 15,
+        "weight": 15
+      },
+      {
+        "exercise": "Shrug (BB) (BFR)",
+        "reps": 15,
+        "weight": 15
+      },
+      {
+        "exercise": "Shrug (BB) (BFR)",
+        "reps": 15,
+        "weight": 15
+      }
+    ],
+    "startTime": "2026-01-07T14:00:00.000Z"
+  },
+  "notes": "Felt: Could have done two more\n1000 lb Club: 455 lbs"
+}

@@ -1,0 +1,56 @@
+{
+  "date": "2026-01-21",
+  "workout": {
+    "mainLift": "Deadlift",
+    "topWeight": 110,
+    "sets": [
+      {
+        "exercise": "Deadlift",
+        "reps": 8,
+        "weight": 110
+      },
+      {
+        "exercise": "Deadlift",
+        "reps": 12,
+        "weight": 88
+      },
+      {
+        "exercise": "Deadlift",
+        "reps": 12,
+        "weight": 88
+      },
+      {
+        "exercise": "Incline Bench (BB)",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Incline Bench (BB)",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Incline Bench (BB)",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "World’s Greatest Stretch",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "World’s Greatest Stretch",
+        "reps": 15,
+        "weight": 0
+      },
+      {
+        "exercise": "World’s Greatest Stretch",
+        "reps": 15,
+        "weight": 0
+      }
+    ],
+    "startTime": "2026-01-21T14:00:00.000Z"
+  },
+  "notes": "Felt: Could have done two more\nFinisher load: Bodyweight\n1000 lb Club: 449 lbs"
+}

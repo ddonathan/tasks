@@ -1,0 +1,56 @@
+{
+  "date": "2026-01-28",
+  "workout": {
+    "mainLift": "Deadlift",
+    "topWeight": 115,
+    "sets": [
+      {
+        "exercise": "Deadlift",
+        "reps": 8,
+        "weight": 115
+      },
+      {
+        "exercise": "Deadlift",
+        "reps": 12,
+        "weight": 92
+      },
+      {
+        "exercise": "Deadlift",
+        "reps": 12,
+        "weight": 92
+      },
+      {
+        "exercise": "Bent Over Row",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Bent Over Row",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Bent Over Row",
+        "reps": 15,
+        "weight": 45
+      },
+      {
+        "exercise": "Lying Curl (DB) (BFR)",
+        "reps": 15,
+        "weight": 10
+      },
+      {
+        "exercise": "Lying Curl (DB) (BFR)",
+        "reps": 15,
+        "weight": 10
+      },
+      {
+        "exercise": "Lying Curl (DB) (BFR)",
+        "reps": 15,
+        "weight": 10
+      }
+    ],
+    "startTime": "2026-01-28T14:00:00.000Z"
+  },
+  "notes": "1000 lb Club: 478 lbs"
+}

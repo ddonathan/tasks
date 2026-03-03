@@ -1,0 +1,152 @@
+{
+  "dan": {
+    "name": "Dan",
+    "inventory": "advanced",
+    "protocol": {
+      "topSets": "1x8",
+      "backoffSets": "2x12",
+      "backoffPct": 0.8,
+      "accessorySets": "3x15",
+      "finisherSets": "3x15"
+    },
+    "mainRotation": ["Bench Press", "Squat", "Overhead Press", "Deadlift"],
+    "currentWeights": {
+      "Bench Press": 112.5,
+      "Squat": 125,
+      "Overhead Press": 72.5,
+      "Deadlift": 125
+    },
+    "progression": {
+      "upper": { "+2": 2.5, "0": 0, "miss": -2.5 },
+      "lower": { "+2": 5, "0": 0, "miss": -5 },
+      "liftCategories": {
+        "Bench Press": "upper",
+        "Overhead Press": "upper",
+        "Squat": "lower",
+        "Deadlift": "lower"
+      }
+    },
+    "accessories": [
+      { "name": "Incline Bench (BB)", "weight": 57 },
+      { "name": "Pull-ups", "weight": "Green + Purple" },
+      { "name": "Bulgarian Split Squat (DB)", "weight": "Bodyweight" },
+      { "name": "Romanian Deadlift (DB)", "weight": 45 },
+      { "name": "Bent Over Row", "weight": 45 },
+      { "name": "Chin-ups", "weight": "Green + Purple" },
+      { "name": "Half sprint 200/400m loaded", "weight": "" },
+      { "name": "Lateral Raises (DB) Seated (BFR)", "weight": 10 },
+      { "name": "Standing Calf Raise (DB) (BFR)", "weight": "Bodyweight" },
+      { "name": "Side/Copenhagen Plank", "weight": "Bodyweight", "reps": "30 sec/side" },
+      { "name": "Band Face Pull/Pull-Apart", "weight": "Red" }
+    ],
+    "finishers": [
+      { "name": "Curl (BB) (BFR)", "weight": 10 },
+      { "name": "Overhead Extension (BB) (BFR)", "weight": 15 },
+      { "name": "Lying Curl (DB) (BFR)", "weight": 10 },
+      { "name": "Shrug (BB) (BFR)", "weight": 15 },
+      { "name": "Skullcrusher (DB) (BFR)", "weight": 5 },
+      { "name": "Close-Grip Bench", "weight": 57 },
+      { "name": "Farmer's Carry (DB)", "weight": 30, "reps": "45 seconds" },
+      { "name": "Cossack Squat", "weight": "Bodyweight", "reps": "15/side" },
+      { "name": "Dead Bug", "weight": "Bodyweight" },
+      { "name": "Shoulder Dislocates", "weight": "Red", "reps": "15 slow" },
+      { "name": "Iron Neck Circuit", "weight": "Red" },
+      { "name": "World's Greatest Stretch", "weight": "Bodyweight", "reps": "8/side, slow" },
+      { "name": "Ab Wheel", "weight": "Bodyweight" }
+    ],
+    "lastCompleted": {
+      "date": "2026-02-13",
+      "mainIndex": 0,
+      "accessoryIndex": 2,
+      "finisherIndex": 11,
+      "result": "+2"
+    }
+  },
+  "ewa": {
+    "name": "Ewa",
+    "inventory": "technique",
+    "protocol": {
+      "topSets": "1x8",
+      "backoffSets": "2x12",
+      "backoffPct": 0.8,
+      "accessorySets": "3x15",
+      "finisherSets": "3x15"
+    },
+    "mainRotation": ["Bench Press", "Overhead Press", "Squat", "Deadlift"],
+    "currentWeights": {
+      "Bench Press": 60,
+      "Overhead Press": 48,
+      "Squat": 40,
+      "Deadlift": 50
+    },
+    "progression": {
+      "upper": { "+2": 2.5, "0": 0, "miss": -2.5 },
+      "lower": { "+2": 5, "0": 0, "miss": -5 },
+      "liftCategories": {
+        "Bench Press": "upper",
+        "Overhead Press": "upper",
+        "Squat": "lower",
+        "Deadlift": "lower"
+      }
+    },
+    "accessories": [
+      { "name": "Side/Copenhagen Plank", "weight": "Bodyweight" },
+      { "name": "Bent Over Row", "weight": 25 },
+      { "name": "Pull-ups", "weight": "Green + Purple" },
+      { "name": "Lateral Raises (DB)", "weight": 5 },
+      { "name": "Romanian Deadlift (BB)", "weight": 15 },
+      { "name": "Reverse Lunge (BB)", "weight": "Bodyweight" },
+      { "name": "Chin-ups", "weight": "Green + Purple" },
+      { "name": "Hip Thrust", "weight": 16 },
+      { "name": "Band Face Pull/Pull-Apart", "weight": "Red Band" },
+      { "name": "Incline Bench (BB)", "weight": 30 },
+      { "name": "Bulgarian Split Squat (DB)", "weight": "Bodyweight" },
+      { "name": "Romanian Deadlift (DB)", "weight": 15 }
+    ],
+    "finishers": [
+      { "name": "World's Greatest Stretch", "weight": "Bodyweight", "reps": "8/side, slow" },
+      { "name": "Dead Bug", "weight": "Bodyweight" },
+      { "name": "Curl (BB)", "weight": 16 },
+      { "name": "Overhead Extension (BB)", "weight": 30 },
+      { "name": "Ab Wheel", "weight": "Bodyweight" },
+      { "name": "Cossack Squat", "weight": "Bodyweight", "reps": "15/side" },
+      { "name": "Skullcrusher (DB)", "weight": 30 },
+      { "name": "Farmer's Carry (DB)", "weight": 15, "reps": "45 sec" },
+      { "name": "Close-Grip Bench", "weight": 30 },
+      { "name": "Shoulder Dislocates", "weight": "Red", "reps": "15 slow" },
+      { "name": "Lying Curl (DB)", "weight": 10 }
+    ],
+    "lastCompleted": {
+      "date": "2026-02-13",
+      "mainIndex": 1,
+      "accessoryIndex": 6,
+      "finisherIndex": 7,
+      "result": "+2",
+      "actualWeight": 45.5
+    }
+  },
+  "warmupCalculator": {
+    "base": "https://ddonathan.github.io/ddonathan/warmup-calculator/index.html"
+  },
+  "nutrition": {
+    "protein": "1-1.2g per lb bodyweight",
+    "water": "95 oz (half bodyweight)",
+    "creatine": "5g daily",
+    "alcohol": "max 2x/week",
+    "steps": 10000
+  },
+  "goals": {
+    "startWeight": 203.9,
+    "startBF": 25.7,
+    "targetBF": 14,
+    "trt": true,
+    "thousandLbClub": "Q3 2027"
+  },
+  "strengthStandards": {
+    "note": "5 Rep Max (190 lb male)",
+    "Bench Press": { "untrained": 85, "novice": 130, "intermediate": 175, "proficient": 220, "advanced": 255 },
+    "Squat": { "untrained": 115, "novice": 175, "intermediate": 235, "proficient": 295, "advanced": 340 },
+    "Overhead Press": { "untrained": 55, "novice": 85, "intermediate": 115, "proficient": 140, "advanced": 165 },
+    "Deadlift": { "untrained": 135, "novice": 200, "intermediate": 270, "proficient": 335, "advanced": 390 }
+  }
+}

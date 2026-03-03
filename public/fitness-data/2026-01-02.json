@@ -1,0 +1,51 @@
+{
+  "date": "2026-01-02",
+  "workout": {
+    "mainLift": "Bench Press",
+    "topWeight": 95,
+    "sets": [
+      {
+        "exercise": "Bench Press",
+        "reps": 8,
+        "weight": 95
+      },
+      {
+        "exercise": "Bench Press",
+        "reps": 12,
+        "weight": 76
+      },
+      {
+        "exercise": "Bench Press",
+        "reps": 12,
+        "weight": 76
+      },
+      {
+        "exercise": "Incline Bench (BB)",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Incline Bench (BB)",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Incline Bench (BB)",
+        "reps": 15,
+        "weight": 57
+      },
+      {
+        "exercise": "Curl (BB) (BFR)",
+        "reps": 15,
+        "weight": 10
+      },
+      {
+        "exercise": "Curl (BB) (BFR)",
+        "reps": 15,
+        "weight": 10
+      }
+    ],
+    "startTime": "2026-01-02T14:00:00.000Z"
+  },
+  "notes": "Felt: Could have done two more"
+}
