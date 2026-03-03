@@ -65,4 +65,62 @@ export default defineSchema({
   })
     .index("by_name", ["name"])
     .index("by_type", ["type"]),
+  workouts: defineTable({
+    date: v.string(),
+    workout: v.object({
+      mainLift: v.string(),
+      topWeight: v.float64(),
+      felt: v.string(),
+      nextWeight: v.float64(),
+      sets: v.array(
+        v.object({
+          exercise: v.string(),
+          reps: v.union(v.float64(), v.string()),
+          weight: v.union(v.float64(), v.string()),
+        }),
+      ),
+      accessories: v.optional(
+        v.array(
+          v.object({
+            exercise: v.string(),
+            reps: v.union(v.float64(), v.string()),
+            weight: v.union(v.float64(), v.string()),
+            sets: v.optional(v.float64()),
+          }),
+        ),
+      ),
+      finishers: v.optional(
+        v.array(
+          v.object({
+            exercise: v.string(),
+            reps: v.union(v.float64(), v.string()),
+            weight: v.union(v.float64(), v.string()),
+            sets: v.optional(v.float64()),
+          }),
+        ),
+      ),
+    }),
+    notes: v.optional(v.string()),
+  }).index("by_date", ["date"]),
+  bodycomp: defineTable({
+    date: v.string(),
+    weight: v.optional(v.float64()),
+    bf: v.optional(v.float64()),
+    smm: v.optional(v.float64()),
+    lbm: v.optional(v.float64()),
+    bfm: v.optional(v.float64()),
+    bmi: v.optional(v.float64()),
+    score: v.optional(v.float64()),
+    measurements: v.optional(
+      v.object({
+        waist: v.optional(v.float64()),
+        chest: v.optional(v.float64()),
+        arms: v.optional(v.float64()),
+        thighs: v.optional(v.float64()),
+      }),
+    ),
+    photos: v.optional(v.array(v.string())),
+    notes: v.optional(v.string()),
+    time: v.optional(v.string()),
+  }).index("by_date", ["date"]),
 });

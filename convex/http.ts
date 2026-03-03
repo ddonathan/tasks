@@ -563,4 +563,343 @@ http.route({
   }),
 });
 
+// ---------- CORS preflight for workouts ----------
+
+http.route({
+  path: "/api/workouts",
+  method: "OPTIONS",
+  handler: httpAction(async () => {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }),
+});
+
+http.route({
+  path: "/api/workouts/stats",
+  method: "OPTIONS",
+  handler: httpAction(async () => {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }),
+});
+
+// ---------- GET /api/workouts ----------
+
+http.route({
+  path: "/api/workouts",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    const url = new URL(request.url);
+    const limitStr = url.searchParams.get("limit");
+    const limit = limitStr ? Number(limitStr) : undefined;
+
+    const workouts = await ctx.runQuery(api.workouts.list, { limit });
+    return json(workouts);
+  }),
+});
+
+// ---------- POST /api/workouts ----------
+
+http.route({
+  path: "/api/workouts",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.date || typeof body.date !== "string") {
+      return error("date is required and must be a string", 400);
+    }
+    if (!body.workout || typeof body.workout !== "object") {
+      return error("workout is required and must be an object", 400);
+    }
+
+    const id = await ctx.runMutation(api.workouts.create, {
+      date: body.date as string,
+      workout: body.workout as {
+        mainLift: string;
+        topWeight: number;
+        felt: string;
+        nextWeight: number;
+        sets: Array<{ exercise: string; reps: number | string; weight: number | string }>;
+        accessories?: Array<{
+          exercise: string;
+          reps: number | string;
+          weight: number | string;
+          sets?: number;
+        }>;
+        finishers?: Array<{
+          exercise: string;
+          reps: number | string;
+          weight: number | string;
+          sets?: number;
+        }>;
+      },
+      notes: body.notes as string | undefined,
+    });
+
+    return json({ id }, 201);
+  }),
+});
+
+// ---------- PATCH /api/workouts ----------
+
+http.route({
+  path: "/api/workouts",
+  method: "PATCH",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.id || typeof body.id !== "string") {
+      return error("id is required and must be a string", 400);
+    }
+
+    const id = await ctx.runMutation(api.workouts.update, {
+      id: body.id as Id<"workouts">,
+      date: body.date as string | undefined,
+      workout: body.workout as
+        | {
+            mainLift: string;
+            topWeight: number;
+            felt: string;
+            nextWeight: number;
+            sets: Array<{ exercise: string; reps: number | string; weight: number | string }>;
+            accessories?: Array<{
+              exercise: string;
+              reps: number | string;
+              weight: number | string;
+              sets?: number;
+            }>;
+            finishers?: Array<{
+              exercise: string;
+              reps: number | string;
+              weight: number | string;
+              sets?: number;
+            }>;
+          }
+        | undefined,
+      notes: body.notes as string | undefined,
+    });
+
+    return json({ id });
+  }),
+});
+
+// ---------- DELETE /api/workouts ----------
+
+http.route({
+  path: "/api/workouts",
+  method: "DELETE",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.id || typeof body.id !== "string") {
+      return error("id is required and must be a string", 400);
+    }
+
+    const id = await ctx.runMutation(api.workouts.remove, {
+      id: body.id as Id<"workouts">,
+    });
+    return json({ id, deleted: true });
+  }),
+});
+
+// ---------- GET /api/workouts/stats ----------
+
+http.route({
+  path: "/api/workouts/stats",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    const stats = await ctx.runQuery(api.workouts.stats, {});
+    return json(stats);
+  }),
+});
+
+// ---------- CORS preflight for bodycomp ----------
+
+http.route({
+  path: "/api/bodycomp",
+  method: "OPTIONS",
+  handler: httpAction(async () => {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }),
+});
+
+http.route({
+  path: "/api/bodycomp/stats",
+  method: "OPTIONS",
+  handler: httpAction(async () => {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }),
+});
+
+// ---------- GET /api/bodycomp ----------
+
+http.route({
+  path: "/api/bodycomp",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    const url = new URL(request.url);
+    const limitStr = url.searchParams.get("limit");
+    const limit = limitStr ? Number(limitStr) : undefined;
+
+    const entries = await ctx.runQuery(api.bodycomp.list, { limit });
+    return json(entries);
+  }),
+});
+
+// ---------- POST /api/bodycomp ----------
+
+http.route({
+  path: "/api/bodycomp",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.date || typeof body.date !== "string") {
+      return error("date is required and must be a string", 400);
+    }
+
+    const id = await ctx.runMutation(api.bodycomp.create, {
+      date: body.date as string,
+      weight: body.weight as number | undefined,
+      bf: body.bf as number | undefined,
+      smm: body.smm as number | undefined,
+      lbm: body.lbm as number | undefined,
+      bfm: body.bfm as number | undefined,
+      bmi: body.bmi as number | undefined,
+      score: body.score as number | undefined,
+      measurements: body.measurements as
+        | {
+            waist?: number;
+            chest?: number;
+            arms?: number;
+            thighs?: number;
+          }
+        | undefined,
+      photos: body.photos as string[] | undefined,
+      notes: body.notes as string | undefined,
+      time: body.time as string | undefined,
+    });
+
+    return json({ id }, 201);
+  }),
+});
+
+// ---------- PATCH /api/bodycomp ----------
+
+http.route({
+  path: "/api/bodycomp",
+  method: "PATCH",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.id || typeof body.id !== "string") {
+      return error("id is required and must be a string", 400);
+    }
+
+    const id = await ctx.runMutation(api.bodycomp.update, {
+      id: body.id as Id<"bodycomp">,
+      date: body.date as string | undefined,
+      weight: body.weight as number | undefined,
+      bf: body.bf as number | undefined,
+      smm: body.smm as number | undefined,
+      lbm: body.lbm as number | undefined,
+      bfm: body.bfm as number | undefined,
+      bmi: body.bmi as number | undefined,
+      score: body.score as number | undefined,
+      measurements: body.measurements as
+        | {
+            waist?: number;
+            chest?: number;
+            arms?: number;
+            thighs?: number;
+          }
+        | undefined,
+      photos: body.photos as string[] | undefined,
+      notes: body.notes as string | undefined,
+      time: body.time as string | undefined,
+    });
+
+    return json({ id });
+  }),
+});
+
+// ---------- DELETE /api/bodycomp ----------
+
+http.route({
+  path: "/api/bodycomp",
+  method: "DELETE",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!body.id || typeof body.id !== "string") {
+      return error("id is required and must be a string", 400);
+    }
+
+    const id = await ctx.runMutation(api.bodycomp.remove, {
+      id: body.id as Id<"bodycomp">,
+    });
+    return json({ id, deleted: true });
+  }),
+});
+
+// ---------- GET /api/bodycomp/stats ----------
+
+http.route({
+  path: "/api/bodycomp/stats",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    const stats = await ctx.runQuery(api.bodycomp.stats, {});
+    return json(stats);
+  }),
+});
+
 export default http;

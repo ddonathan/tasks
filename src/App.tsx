@@ -3,7 +3,9 @@ import { useConvexAuth } from "convex/react";
 import { Eye, EyeOff, LayoutGrid, List, LogOut, Search } from "lucide-react";
 import { useCallback, useState } from "react";
 import type { Id } from "../convex/_generated/dataModel";
+import BodyCompDashboard from "./components/BodyCompDashboard";
 import BrainDump from "./components/BrainDump";
+import FitnessDashboard from "./components/FitnessDashboard";
 import KanbanBoard from "./components/KanbanBoard";
 import ListView from "./components/ListView";
 import Login from "./components/Login";
@@ -160,17 +162,10 @@ function AuthenticatedApp({ signOut }: { signOut: () => Promise<void> }) {
         </>
       ) : page === "tags" ? (
         <TagsManager />
+      ) : page === "fitness" ? (
+        <FitnessDashboard />
       ) : (
-        <iframe
-          src={page === "fitness" ? "/fitness.html" : "/bodycomp.html"}
-          title={page === "fitness" ? "Big Four No Dread" : "Body Composition"}
-          style={{
-            width: "100%",
-            height: "calc(100vh - 60px)",
-            border: "none",
-            background: "#0f1117",
-          }}
-        />
+        <BodyCompDashboard />
       )}
     </>
   );
