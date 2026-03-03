@@ -35,39 +35,44 @@ export const getByDate = query({
 export const create = mutation({
   args: {
     date: v.string(),
-    workout: v.object({
-      mainLift: v.string(),
-      topWeight: v.float64(),
-      felt: v.string(),
-      nextWeight: v.float64(),
-      sets: v.array(
-        v.object({
-          exercise: v.string(),
-          reps: v.union(v.float64(), v.string()),
-          weight: v.union(v.float64(), v.string()),
-        }),
-      ),
-      accessories: v.optional(
-        v.array(
-          v.object({
-            exercise: v.string(),
-            reps: v.union(v.float64(), v.string()),
-            weight: v.union(v.float64(), v.string()),
-            sets: v.optional(v.float64()),
-          }),
+    workout: v.optional(
+      v.object({
+        mainLift: v.optional(v.string()),
+        topWeight: v.optional(v.float64()),
+        felt: v.optional(v.string()),
+        nextWeight: v.optional(v.float64()),
+        startTime: v.optional(v.string()),
+        sets: v.optional(
+          v.array(
+            v.object({
+              exercise: v.string(),
+              reps: v.union(v.float64(), v.string()),
+              weight: v.union(v.float64(), v.string()),
+            }),
+          ),
         ),
-      ),
-      finishers: v.optional(
-        v.array(
-          v.object({
-            exercise: v.string(),
-            reps: v.union(v.float64(), v.string()),
-            weight: v.union(v.float64(), v.string()),
-            sets: v.optional(v.float64()),
-          }),
+        accessories: v.optional(
+          v.array(
+            v.object({
+              exercise: v.string(),
+              reps: v.union(v.float64(), v.string()),
+              weight: v.union(v.float64(), v.string()),
+              sets: v.optional(v.float64()),
+            }),
+          ),
         ),
-      ),
-    }),
+        finishers: v.optional(
+          v.array(
+            v.object({
+              exercise: v.string(),
+              reps: v.union(v.float64(), v.string()),
+              weight: v.union(v.float64(), v.string()),
+              sets: v.optional(v.float64()),
+            }),
+          ),
+        ),
+      }),
+    ),
     notes: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
