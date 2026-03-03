@@ -1,8 +1,9 @@
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { Plus } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../../convex/_generated/api";
 import type { Id } from "../../convex/_generated/dataModel";
+import ProjectCombobox from "./ProjectCombobox";
 
 type TaskStatus = "inbox" | "active" | "backlog" | "done" | "someday";
 
@@ -37,7 +38,6 @@ export default function QuickCapture({
   const [realisticEta, setRealisticEta] = useState("");
   const titleRef = useRef<HTMLInputElement>(null);
   const createTask = useMutation(api.tasks.create);
-  const projects = useQuery(api.projects.list, {});
 
   const isOpen = forceOpen || open;
 
@@ -173,18 +173,11 @@ export default function QuickCapture({
 
               <div className="form-field">
                 <label htmlFor="new-project">Project</label>
-                <select
+                <ProjectCombobox
                   id="new-project"
                   value={selectedProjectId}
-                  onChange={(e) => setSelectedProjectId(e.target.value)}
-                >
-                  <option value="">No project</option>
-                  {projects?.map((p) => (
-                    <option key={p._id} value={p._id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setSelectedProjectId}
+                />
               </div>
             </div>
 
