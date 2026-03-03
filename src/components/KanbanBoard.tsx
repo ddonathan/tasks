@@ -43,6 +43,7 @@ function DraggableCard({
   task,
   onSelect,
   onTagClick,
+  onOpenTask,
 }: {
   task: Doc<"tasks">;
   onSelect: () => void;
