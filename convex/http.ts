@@ -3,8 +3,12 @@ import { httpRouter } from "convex/server";
 import { api } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { httpAction } from "./_generated/server";
+import { auth } from "./auth";
 
 const http = httpRouter();
+
+// ---------- Convex Auth routes ----------
+auth.addHttpRoutes(http);
 
 // ---------- helpers ----------
 

@@ -952,3 +952,78 @@ a:hover {
     width: 100%;
   }
 }
+
+/* ---------- Login Page ---------- */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 48px 40px;
+  text-align: center;
+  max-width: 380px;
+  width: 100%;
+}
+
+.login-card h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.login-card p {
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  font-size: 0.875rem;
+}
+
+.login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.login-btn:hover {
+  opacity: 0.85;
+}
+
+/* ---------- Sign Out Button ---------- */
+
+.sign-out-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.sign-out-btn:hover {
+  color: var(--p1);
+  border-color: var(--p1);
+}

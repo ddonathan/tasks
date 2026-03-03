@@ -1,9 +1,12 @@
-import { Eye, EyeOff, LayoutGrid, List, Search } from "lucide-react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useConvexAuth } from "convex/react";
+import { Eye, EyeOff, LayoutGrid, List, LogOut, Search } from "lucide-react";
 import { useCallback, useState } from "react";
 import type { Id } from "../convex/_generated/dataModel";
 import BrainDump from "./components/BrainDump";
 import KanbanBoard from "./components/KanbanBoard";
 import ListView from "./components/ListView";
+import Login from "./components/Login";
 import QuickCapture from "./components/QuickCapture";
 import StatsBar from "./components/StatsBar";
 import TaskDetail from "./components/TaskDetail";
@@ -11,6 +14,27 @@ import TaskDetail from "./components/TaskDetail";
 type View = "kanban" | "list";
 
 export default function App() {
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  const { signOut } = useAuthActions();
+
+  if (isLoading) {
+    return (
+      <div className="login-page">
+        <div className="login-card">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
+
+  return <AuthenticatedApp signOut={signOut} />;
+}
+
+function AuthenticatedApp({ signOut }: { signOut: () => Promise<void> }) {
   const [view, setView] = useState<View>("kanban");
   const [selectedTaskId, setSelectedTaskId] = useState<Id<"tasks"> | null>(null);
   const [filterText, setFilterText] = useState("");
@@ -77,6 +101,15 @@ export default function App() {
           </button>
           <BrainDump />
         </div>
+
+        <button
+          type="button"
+          className="sign-out-btn"
+          onClick={() => void signOut()}
+          title="Sign out"
+        >
+          <LogOut size={14} />
+        </button>
       </header>
 
       {/* Stats */}
