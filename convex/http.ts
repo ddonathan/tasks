@@ -616,31 +616,24 @@ http.route({
     if (!body.date || typeof body.date !== "string") {
       return error("date is required and must be a string", 400);
     }
-    if (!body.workout || typeof body.workout !== "object") {
-      return error("workout is required and must be an object", 400);
-    }
+    // biome-ignore lint/suspicious/noExplicitAny: flexible workout shape from API
+    const workout = body.workout as any;
 
     const id = await ctx.runMutation(api.workouts.create, {
       date: body.date as string,
-      workout: body.workout as {
-        mainLift: string;
-        topWeight: number;
-        felt: string;
-        nextWeight: number;
-        sets: Array<{ exercise: string; reps: number | string; weight: number | string }>;
-        accessories?: Array<{
-          exercise: string;
-          reps: number | string;
-          weight: number | string;
-          sets?: number;
-        }>;
-        finishers?: Array<{
-          exercise: string;
-          reps: number | string;
-          weight: number | string;
-          sets?: number;
-        }>;
-      },
+      workout:
+        workout && typeof workout === "object"
+          ? {
+              mainLift: workout.mainLift,
+              topWeight: workout.topWeight,
+              felt: workout.felt,
+              nextWeight: workout.nextWeight,
+              startTime: workout.startTime,
+              sets: workout.sets,
+              accessories: workout.accessories,
+              finishers: workout.finishers,
+            }
+          : undefined,
       notes: body.notes as string | undefined,
     });
 
