@@ -5,6 +5,7 @@ interface TaskCardProps {
   task: Doc<"tasks">;
   onClick: () => void;
   isDragging?: boolean;
+  onTagClick?: (tag: string) => void;
 }
 
 function getPriority(tags: string[]): string | null {
@@ -32,7 +33,7 @@ const priorityLabels: Record<string, string> = {
   p4: "Low",
 };
 
-export default function TaskCard({ task, onClick, isDragging }: TaskCardProps) {
+export default function TaskCard({ task, onClick, isDragging, onTagClick }: TaskCardProps) {
   const priority = getPriority(task.tags);
   const owner = findTagByPrefix(task.tags, "own-");
   const client = findTagByPrefix(task.tags, "c-");
@@ -58,6 +59,23 @@ export default function TaskCard({ task, onClick, isDragging }: TaskCardProps) {
         )}
         {client && <span style={{ opacity: 0.7 }}>{client}</span>}
       </div>
+      {task.tags.length > 0 && (
+        <div className="task-card-tags">
+          {task.tags.map((tag) => (
+            <button
+              type="button"
+              key={tag}
+              className="tag-chip clickable"
+              onClick={(e) => {
+                e.stopPropagation();
+                onTagClick?.(tag);
+              }}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
     </button>
   );
 }

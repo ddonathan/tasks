@@ -89,6 +89,57 @@ export const create = mutation({
   },
 });
 
+export const batchCreate = mutation({
+  args: {
+    tasks: v.array(
+      v.object({
+        title: v.string(),
+        status: v.optional(
+          v.union(
+            v.literal("inbox"),
+            v.literal("active"),
+            v.literal("backlog"),
+            v.literal("done"),
+            v.literal("someday"),
+          ),
+        ),
+        startDate: v.optional(v.string()),
+        dueDate: v.optional(v.string()),
+        followUpDate: v.optional(v.string()),
+        promisedEta: v.optional(v.string()),
+        realisticEta: v.optional(v.string()),
+        tags: v.optional(v.array(v.string())),
+        notes: v.optional(v.string()),
+        log: v.optional(v.array(v.object({ timestamp: v.number(), entry: v.string() }))),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const ids = [];
+    for (const task of args.tasks) {
+      const taskId = await ctx.db.insert("tasks", {
+        title: task.title,
+        status: task.status ?? "inbox",
+        createdAt: Date.now(),
+        startDate: task.startDate,
+        dueDate: task.dueDate,
+        followUpDate: task.followUpDate,
+        promisedEta: task.promisedEta,
+        realisticEta: task.realisticEta,
+        tags: task.tags ?? [],
+        notes: task.notes ?? "",
+        log: task.log ?? [],
+      });
+      await ctx.scheduler.runAfter(0, internal.webhooks.fire, {
+        event: "task.created",
+        data: { id: taskId, title: task.title },
+      });
+      ids.push(taskId);
+    }
+    return ids;
+  },
+});
+
 export const update = mutation({
   args: {
     id: v.id("tasks"),

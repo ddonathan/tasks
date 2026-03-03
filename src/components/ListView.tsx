@@ -8,8 +8,28 @@ type SortField = "title" | "status" | "dueDate" | "tags";
 type SortDir = "asc" | "desc";
 type TaskStatus = "inbox" | "active" | "backlog" | "done" | "someday";
 
+const TAG_PREFIXES = ["@", "p-", "c-", "#", "!"];
+
+function matchesFilter(task: Doc<"tasks">, filterText: string): boolean {
+  if (!filterText.trim()) return true;
+  const terms = filterText.trim().split(/\s+/);
+  return terms.every((term) => {
+    const isTagTerm = TAG_PREFIXES.some((p) => term.startsWith(p));
+    if (isTagTerm) {
+      return task.tags.some((tag) => tag.toLowerCase() === term.toLowerCase());
+    }
+    const lower = term.toLowerCase();
+    return (
+      task.title.toLowerCase().includes(lower) || (task.notes ?? "").toLowerCase().includes(lower)
+    );
+  });
+}
+
 interface ListViewProps {
   onSelectTask: (id: Id<"tasks">) => void;
+  showAll: boolean;
+  filterText: string;
+  onTagClick: (tag: string) => void;
 }
 
 const STATUS_OPTIONS: { value: string; label: string }[] = [
@@ -21,23 +41,34 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "someday", label: "Someday" },
 ];
 
-export default function ListView({ onSelectTask }: ListViewProps) {
+export default function ListView({ onSelectTask, showAll, filterText, onTagClick }: ListViewProps) {
   const [filterStatus, setFilterStatus] = useState<string>("");
-  const [filterTag, setFilterTag] = useState("");
   const [sortField, setSortField] = useState<SortField>("title");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const queryArgs = filterStatus ? { status: filterStatus as TaskStatus } : {};
   const tasks = useQuery(api.tasks.list, queryArgs);
 
+  const today = new Date().toISOString().split("T")[0];
+
   const filteredAndSorted = useMemo(() => {
     if (!tasks) return [];
 
     let result = tasks;
 
-    if (filterTag) {
-      const lower = filterTag.toLowerCase();
-      result = result.filter((t) => t.tags.some((tag) => tag.toLowerCase().includes(lower)));
+    // Hide done tasks unless showAll
+    if (!showAll) {
+      result = result.filter((t) => t.status !== "done");
+    }
+
+    // Hide future startDate tasks unless showAll
+    if (!showAll) {
+      result = result.filter((t) => !t.startDate || t.startDate <= today);
+    }
+
+    // Apply filterText
+    if (filterText) {
+      result = result.filter((t) => matchesFilter(t, filterText));
     }
 
     result = [...result].sort((a, b) => {
@@ -48,7 +79,7 @@ export default function ListView({ onSelectTask }: ListViewProps) {
     });
 
     return result;
-  }, [tasks, filterTag, sortField, sortDir]);
+  }, [tasks, filterText, sortField, sortDir, showAll, today]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -86,11 +117,6 @@ export default function ListView({ onSelectTask }: ListViewProps) {
             </option>
           ))}
         </select>
-        <input
-          placeholder="Filter by tag..."
-          value={filterTag}
-          onChange={(e) => setFilterTag(e.target.value)}
-        />
       </div>
 
       {filteredAndSorted.length === 0 ? (
@@ -156,9 +182,17 @@ export default function ListView({ onSelectTask }: ListViewProps) {
                 </td>
                 <td>
                   {task.tags.map((tag) => (
-                    <span key={tag} className="tag-chip">
+                    <button
+                      type="button"
+                      key={tag}
+                      className="tag-chip clickable"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onTagClick(tag);
+                      }}
+                    >
                       {tag}
-                    </span>
+                    </button>
                   ))}
                 </td>
               </tr>

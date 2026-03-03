@@ -8,25 +8,53 @@ import TaskCard from "./TaskCard";
 
 type TaskStatus = "inbox" | "active" | "backlog" | "done";
 
-const COLUMNS: { status: TaskStatus; label: string }[] = [
+const ALL_COLUMNS: { status: TaskStatus; label: string }[] = [
   { status: "inbox", label: "Inbox" },
-  { status: "active", label: "Active" },
   { status: "backlog", label: "Backlog" },
+  { status: "active", label: "Active" },
   { status: "done", label: "Done" },
 ];
 
-interface KanbanBoardProps {
-  onSelectTask: (id: Id<"tasks">) => void;
+const TAG_PREFIXES = ["@", "p-", "c-", "#", "!"];
+
+function matchesFilter(task: Doc<"tasks">, filterText: string): boolean {
+  if (!filterText.trim()) return true;
+  const terms = filterText.trim().split(/\s+/);
+  return terms.every((term) => {
+    const isTagTerm = TAG_PREFIXES.some((p) => term.startsWith(p));
+    if (isTagTerm) {
+      return task.tags.some((tag) => tag.toLowerCase() === term.toLowerCase());
+    }
+    const lower = term.toLowerCase();
+    return (
+      task.title.toLowerCase().includes(lower) || (task.notes ?? "").toLowerCase().includes(lower)
+    );
+  });
 }
 
-function DraggableCard({ task, onSelect }: { task: Doc<"tasks">; onSelect: () => void }) {
+interface KanbanBoardProps {
+  onSelectTask: (id: Id<"tasks">) => void;
+  showAll: boolean;
+  filterText: string;
+  onTagClick: (tag: string) => void;
+}
+
+function DraggableCard({
+  task,
+  onSelect,
+  onTagClick,
+}: {
+  task: Doc<"tasks">;
+  onSelect: () => void;
+  onTagClick?: (tag: string) => void;
+}) {
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({
     id: task._id,
   });
 
   return (
     <div ref={setNodeRef} {...attributes} {...listeners}>
-      <TaskCard task={task} onClick={onSelect} isDragging={isDragging} />
+      <TaskCard task={task} onClick={onSelect} isDragging={isDragging} onTagClick={onTagClick} />
     </div>
   );
 }
@@ -36,11 +64,13 @@ function DroppableColumn({
   label,
   tasks,
   onSelectTask,
+  onTagClick,
 }: {
   status: TaskStatus;
   label: string;
   tasks: Doc<"tasks">[];
   onSelectTask: (id: Id<"tasks">) => void;
+  onTagClick?: (tag: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
 
@@ -52,7 +82,12 @@ function DroppableColumn({
       </div>
       <div className="kanban-column-body" ref={setNodeRef}>
         {tasks.map((task) => (
-          <DraggableCard key={task._id} task={task} onSelect={() => onSelectTask(task._id)} />
+          <DraggableCard
+            key={task._id}
+            task={task}
+            onSelect={() => onSelectTask(task._id)}
+            onTagClick={onTagClick}
+          />
         ))}
         {tasks.length === 0 && (
           <div className="empty-state" style={{ padding: 20 }}>
@@ -64,7 +99,12 @@ function DroppableColumn({
   );
 }
 
-export default function KanbanBoard({ onSelectTask }: KanbanBoardProps) {
+export default function KanbanBoard({
+  onSelectTask,
+  showAll,
+  filterText,
+  onTagClick,
+}: KanbanBoardProps) {
   const tasks = useQuery(api.tasks.list, {});
   const moveTask = useMutation(api.tasks.move);
 
@@ -74,6 +114,8 @@ export default function KanbanBoard({ onSelectTask }: KanbanBoardProps) {
     }),
   );
 
+  const columns = showAll ? ALL_COLUMNS : ALL_COLUMNS.filter((c) => c.status !== "done");
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
@@ -81,11 +123,9 @@ export default function KanbanBoard({ onSelectTask }: KanbanBoardProps) {
     const taskId = active.id as Id<"tasks">;
     const targetStatus = over.id as string;
 
-    // Only move if dropping on a column (not another card)
-    const validStatuses: string[] = COLUMNS.map((c) => c.status);
+    const validStatuses: string[] = ALL_COLUMNS.map((c) => c.status);
     if (!validStatuses.includes(targetStatus)) return;
 
-    // Find the task to check if status actually changed
     const task = tasks?.find((t) => t._id === taskId);
     if (!task || task.status === targetStatus) return;
 
@@ -103,6 +143,8 @@ export default function KanbanBoard({ onSelectTask }: KanbanBoardProps) {
     );
   }
 
+  const today = new Date().toISOString().split("T")[0];
+
   const tasksByStatus: Record<TaskStatus, Doc<"tasks">[]> = {
     inbox: [],
     active: [],
@@ -111,6 +153,14 @@ export default function KanbanBoard({ onSelectTask }: KanbanBoardProps) {
   };
 
   for (const task of tasks) {
+    // Filter out future startDate tasks unless showAll
+    if (!showAll && task.startDate && task.startDate > today) {
+      continue;
+    }
+    // Apply text filter
+    if (!matchesFilter(task, filterText)) {
+      continue;
+    }
     const col = tasksByStatus[task.status as TaskStatus];
     if (col) {
       col.push(task);
@@ -120,13 +170,14 @@ export default function KanbanBoard({ onSelectTask }: KanbanBoardProps) {
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
       <div className="kanban-board">
-        {COLUMNS.map((col) => (
+        {columns.map((col) => (
           <DroppableColumn
             key={col.status}
             status={col.status}
             label={col.label}
             tasks={tasksByStatus[col.status]}
             onSelectTask={onSelectTask}
+            onTagClick={onTagClick}
           />
         ))}
       </div>

@@ -1,8 +1,6 @@
-import { useQuery } from "convex/react";
-import { LayoutGrid, List, Search } from "lucide-react";
+import { Eye, EyeOff, LayoutGrid, List, Search } from "lucide-react";
 import { useCallback, useState } from "react";
-import { api } from "../convex/_generated/api";
-import type { Doc, Id } from "../convex/_generated/dataModel";
+import type { Id } from "../convex/_generated/dataModel";
 import BrainDump from "./components/BrainDump";
 import KanbanBoard from "./components/KanbanBoard";
 import ListView from "./components/ListView";
@@ -15,13 +13,8 @@ type View = "kanban" | "list";
 export default function App() {
   const [view, setView] = useState<View>("kanban");
   const [selectedTaskId, setSelectedTaskId] = useState<Id<"tasks"> | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
-
-  const searchResults = useQuery(
-    api.tasks.search,
-    searchQuery.length >= 2 ? { query: searchQuery } : "skip",
-  );
+  const [filterText, setFilterText] = useState("");
+  const [showAll, setShowAll] = useState(false);
 
   const handleSelectTask = useCallback((id: Id<"tasks">) => {
     setSelectedTaskId(id);
@@ -31,11 +24,15 @@ export default function App() {
     setSelectedTaskId(null);
   }, []);
 
-  const handleSearchSelect = (task: Doc<"tasks">) => {
-    setSelectedTaskId(task._id);
-    setSearchQuery("");
-    setShowSearch(false);
-  };
+  const handleTagClick = useCallback((tag: string) => {
+    setFilterText((prev) => {
+      const terms = prev.split(/\s+/).filter(Boolean);
+      if (terms.includes(tag)) {
+        return terms.filter((t) => t !== tag).join(" ");
+      }
+      return prev ? `${prev} ${tag}` : tag;
+    });
+  }, []);
 
   return (
     <>
@@ -46,50 +43,20 @@ export default function App() {
         <div className="search-wrapper">
           <Search size={14} className="search-icon" />
           <input
-            placeholder="Search tasks..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setShowSearch(e.target.value.length >= 2);
-            }}
-            onFocus={() => {
-              if (searchQuery.length >= 2) setShowSearch(true);
-            }}
-            onBlur={() => {
-              // Delay to allow click on results
-              setTimeout(() => setShowSearch(false), 200);
-            }}
+            placeholder="Filter tasks... (use tags like @context #project)"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
           />
-          {showSearch && searchResults && searchResults.length > 0 && (
-            <div className="search-results">
-              {searchResults.map((task) => (
-                <div
-                  key={task._id}
-                  className="search-result-item"
-                  role="option"
-                  tabIndex={0}
-                  onMouseDown={() => handleSearchSelect(task)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") handleSearchSelect(task);
-                  }}
-                >
-                  <div className="result-title">{task.title}</div>
-                  <div className="result-meta">
-                    {task.status}
-                    {task.tags.length > 0 ? ` | ${task.tags.join(", ")}` : ""}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          {showSearch && searchResults && searchResults.length === 0 && (
-            <div className="search-results">
-              <div className="search-result-item">
-                <div className="result-meta">No results found</div>
-              </div>
-            </div>
-          )}
         </div>
+
+        <button
+          type="button"
+          className={`show-all-toggle${showAll ? " active" : ""}`}
+          onClick={() => setShowAll(!showAll)}
+          title={showAll ? "Showing all tasks" : "Hiding done & future tasks"}
+        >
+          {showAll ? <Eye size={14} /> : <EyeOff size={14} />}
+        </button>
 
         <div className="view-tabs">
           <button
@@ -118,9 +85,19 @@ export default function App() {
       {/* Main content */}
       <div className="app-main">
         {view === "kanban" ? (
-          <KanbanBoard onSelectTask={handleSelectTask} />
+          <KanbanBoard
+            onSelectTask={handleSelectTask}
+            showAll={showAll}
+            filterText={filterText}
+            onTagClick={handleTagClick}
+          />
         ) : (
-          <ListView onSelectTask={handleSelectTask} />
+          <ListView
+            onSelectTask={handleSelectTask}
+            showAll={showAll}
+            filterText={filterText}
+            onTagClick={handleTagClick}
+          />
         )}
       </div>
 

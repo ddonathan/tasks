@@ -59,6 +59,14 @@ http.route({
 });
 
 http.route({
+  path: "/api/tasks/batch",
+  method: "OPTIONS",
+  handler: httpAction(async () => {
+    return new Response(null, { status: 204, headers: corsHeaders });
+  }),
+});
+
+http.route({
   path: "/api/stats",
   method: "OPTIONS",
   handler: httpAction(async () => {
@@ -125,6 +133,51 @@ http.route({
     });
 
     return json({ id }, 201);
+  }),
+});
+
+// ---------- POST /api/tasks/batch ----------
+
+http.route({
+  path: "/api/tasks/batch",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    if (!authorize(request)) return error("Unauthorized", 401);
+
+    let body: Record<string, unknown>;
+    try {
+      body = await request.json();
+    } catch {
+      return error("Invalid JSON body", 400);
+    }
+
+    if (!Array.isArray(body.tasks)) {
+      return error("tasks is required and must be an array", 400);
+    }
+
+    // Validate each task has a title
+    for (const task of body.tasks) {
+      if (!task.title || typeof task.title !== "string") {
+        return error("Each task must have a title string", 400);
+      }
+    }
+
+    const ids = await ctx.runMutation(api.tasks.batchCreate, {
+      tasks: body.tasks as Array<{
+        title: string;
+        status?: "inbox" | "active" | "backlog" | "done" | "someday";
+        startDate?: string;
+        dueDate?: string;
+        followUpDate?: string;
+        promisedEta?: string;
+        realisticEta?: string;
+        tags?: string[];
+        notes?: string;
+        log?: Array<{ timestamp: number; entry: string }>;
+      }>,
+    });
+
+    return json({ ids }, 201);
   }),
 });
 
