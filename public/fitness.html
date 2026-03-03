@@ -29,17 +29,8 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 24px;
+    padding: 8px;
   }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  .header h1 { font-size: 24px; font-weight: 700; }
-  .header h1 span { color: var(--accent); }
-  .header .subtitle { color: var(--muted); font-size: 14px; margin-top: 2px; }
   .refresh-btn {
     background: var(--card);
     color: var(--text);
@@ -337,54 +328,11 @@
     .nw-grid { grid-template-columns: repeat(2, 1fr); }
     .club-lifts { grid-template-columns: repeat(2, 1fr); }
   }
-  /* Hamburger Nav Menu */
-  .nav-menu { position: relative; z-index: 1000; }
-  .nav-hamburger {
-    background: none; border: 1px solid var(--border); color: var(--text);
-    font-size: 24px; cursor: pointer; padding: 4px 10px; border-radius: 8px;
-    line-height: 1; transition: background 0.2s, border-color 0.2s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .nav-hamburger:hover { background: var(--card); border-color: var(--accent); }
-  .nav-dropdown {
-    display: none; position: absolute; top: calc(100% + 8px); left: 0;
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    min-width: 260px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    overflow: hidden; opacity: 0; transform: translateY(-8px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .nav-dropdown.open { display: block; opacity: 1; transform: translateY(0); }
-  .nav-dropdown a {
-    display: block; padding: 12px 18px; color: var(--text); text-decoration: none;
-    transition: background 0.15s; font-size: 15px; border-bottom: 1px solid var(--border);
-  }
-  .nav-dropdown a:last-child { border-bottom: none; }
-  .nav-dropdown a:hover { background: rgba(99,102,241,0.12); }
-  .nav-dropdown a.current { color: var(--muted); background: rgba(99,102,241,0.06); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div class="nav-menu">
-      <button class="nav-hamburger" onclick="toggleNav(event)" aria-label="Navigation menu">☰</button>
-      <div class="nav-dropdown" id="navDropdown">
-        <a href="/health">🩸 Blood Lab Dashboard</a>
-        <a href="/bodycomp">📊 Body Composition</a>
-        <a href="/fitness" class="current">🏋️ Big Four No Dread</a>
-        <a href="http://dans-mac-mini.tail0f7217.ts.net:3333">📈 Vik's Trading Desk</a>
-        <a href="/tasks">📋 Task Dashboard</a>
-        <a href="/trusted-contacts">👥 Trusted Contacts</a>
-        <a href="https://dans-mac-mini.tail0f7217.ts.net:3457">📸 Imagine Studio</a>
-        <a href="https://dans-mac-mini.tail0f7217.ts.net:3100">🔮 Mira Live</a>
-      </div>
-    </div>
-    <div>
-      <h1>🏋️ Big Four <span>No Dread</span></h1>
-      <div class="subtitle">Lift · Progress · Dominate</div>
-    </div>
-  </div>
+<div style="text-align:right;margin-bottom:8px">
   <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
 </div>
 
@@ -435,21 +383,14 @@ function liftColorClass(lift) {
 async function loadAll() {
   try {
     // Load data files, schedule, and program in parallel
-    const [fileListText, programResp] = await Promise.all([
-      fetch('/fitness-data/').then(r => r.text()),
+    const [fileList, programResp] = await Promise.all([
+      fetch('/fitness-data/index.json').then(r => r.json()),
       fetch('/program.json').then(r => r.json())
     ]);
 
     program = programResp;
 
-    // Parse file list — could be JSON array or HTML directory listing
-    let files;
-    try {
-      files = JSON.parse(fileListText).filter(f => f.endsWith('.json'));
-    } catch {
-      // HTML directory listing: extract href="*.json" links
-      files = [...fileListText.matchAll(/href="([^"]+\.json)"/g)].map(m => m[1]);
-    }
+    const files = fileList.filter(f => f.endsWith('.json'));
     const promises = files.map(f => fetch(`/fitness-data/${f}`).then(r => r.json()).catch(() => null));
     const results = await Promise.all(promises);
     workouts = results.filter(Boolean).sort((a, b) => a.date.localeCompare(b.date));
@@ -880,10 +821,6 @@ function renderRotation() {
 
 // Init
 loadAll();
-</script>
-<script>
-function toggleNav(e){e.stopPropagation();var d=document.getElementById('navDropdown');if(d.classList.contains('open')){d.classList.remove('open');setTimeout(()=>d.style.display='none',200)}else{d.style.display='block';requestAnimationFrame(()=>d.classList.add('open'))}}
-document.addEventListener('click',()=>{var d=document.getElementById('navDropdown');if(d.classList.contains('open')){d.classList.remove('open');setTimeout(()=>d.style.display='none',200)}});
 </script>
 </body>
 </html>

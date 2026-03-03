@@ -26,17 +26,8 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    padding: 24px;
+    padding: 8px;
   }
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  .header h1 { font-size: 24px; font-weight: 700; }
-  .header h1 span { color: var(--accent); }
-  .header .subtitle { color: var(--muted); font-size: 14px; margin-top: 2px; }
   .controls { display: flex; gap: 8px; align-items: center; }
   .controls select, .controls button {
     background: var(--card);
@@ -288,55 +279,11 @@
     .form-section-label { padding-bottom: 4px; }
     .photo-compare-grid { grid-template-columns: 1fr; }
   }
-  /* Hamburger Nav Menu */
-  .nav-menu { position: relative; z-index: 1000; }
-  .nav-hamburger {
-    background: none; border: 1px solid var(--border); color: var(--text);
-    font-size: 24px; cursor: pointer; padding: 4px 10px; border-radius: 8px;
-    line-height: 1; transition: background 0.2s, border-color 0.2s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .nav-hamburger:hover { background: var(--card); border-color: var(--accent); }
-  .nav-dropdown {
-    display: none; position: absolute; top: calc(100% + 8px); left: 0;
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    min-width: 260px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    overflow: hidden; opacity: 0; transform: translateY(-8px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .nav-dropdown.open { display: block; opacity: 1; transform: translateY(0); }
-  .nav-dropdown a {
-    display: block; padding: 12px 18px; color: var(--text); text-decoration: none;
-    transition: background 0.15s; font-size: 15px; border-bottom: 1px solid var(--border);
-  }
-  .nav-dropdown a:last-child { border-bottom: none; }
-  .nav-dropdown a:hover { background: rgba(99,102,241,0.12); }
-  .nav-dropdown a.current { color: var(--muted); background: rgba(99,102,241,0.06); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div style="display:flex;align-items:center;gap:12px;">
-    <div class="nav-menu">
-      <button class="nav-hamburger" onclick="toggleNav(event)" aria-label="Navigation menu">☰</button>
-      <div class="nav-dropdown" id="navDropdown">
-        <a href="/health">🩸 Blood Lab Dashboard</a>
-        <a href="/bodycomp" class="current">📊 Body Composition</a>
-        <a href="/fitness">🏋️ Big Four No Dread</a>
-        <a href="http://dans-mac-mini.tail0f7217.ts.net:3333">📈 Vik's Trading Desk</a>
-        <a href="/tasks">📋 Task Dashboard</a>
-        <a href="/trusted-contacts">👥 Trusted Contacts</a>
-        <a href="https://dans-mac-mini.tail0f7217.ts.net:3457">📸 Imagine Studio</a>
-        <a href="https://dans-mac-mini.tail0f7217.ts.net:3100">🔮 Mira Live</a>
-      </div>
-    </div>
-    <div>
-      <h1>📊 Body <span>Composition</span></h1>
-      <div class="subtitle">Track · Analyze · Project</div>
-    </div>
-  </div>
-  <div class="controls">
+<div class="controls" style="padding:8px 0;">
     <select id="rangeSelect" onchange="updateDashboard()">
       <option value="30">30 Days</option>
       <option value="60" selected>60 Days</option>
@@ -345,7 +292,6 @@
     </select>
     <button onclick="toggleSmoothing()" id="smoothBtn">7d Avg</button>
     <button onclick="loadData()" title="Refresh">↻</button>
-  </div>
 </div>
 
 <!-- Quick Log -->
@@ -472,10 +418,9 @@ async function loadData() {
   const basePath = window.location.pathname.replace(/\/?$/, '/');
   // Try loading from data/ directory via fetch (works with local server)
   try {
-    const resp = await fetch(`/bodycomp-data/`);
+    const resp = await fetch(`/bodycomp-data/index.json`);
     if (resp.ok) {
-      const text = await resp.text();
-      const files = [...text.matchAll(/href="([^"]+\.json)"/g)].map(m => m[1]);
+      const files = await resp.json();
       const entries = [];
       for (const f of files) {
         try {
