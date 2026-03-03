@@ -415,7 +415,7 @@ let charts = {};
 // Data loading — tries fetch first (if served), falls back to embedded/localStorage
 async function loadData() {
   // Resolve base path from current URL (handles /bodycomp prefix from Tailscale serve)
-  const basePath = window.location.pathname.replace(/\/?$/, '/');
+  const basePath = '/';
   // Try loading from data/ directory via fetch (works with local server)
   try {
     const resp = await fetch(`/bodycomp-data/index.json`);
@@ -1119,7 +1119,7 @@ function updatePhotoTimeline(data) {
   if (!photoDates.length) { card.style.display = 'none'; return; }
   card.style.display = 'block';
 
-  const basePath = window.location.pathname.replace(/\/?$/, '/');
+  const basePath = '/';
   const timeline = document.getElementById('photoTimeline');
   timeline.innerHTML = photoDates.map(d => {
     const front = d.photos.find(p => p.includes('front.'));
@@ -1213,7 +1213,7 @@ function switchPhotoView(view) {
 
 function renderPhotoComparison() {
   const grid = document.getElementById('photoCompareGrid');
-  const basePath = window.location.pathname.replace(/\/?$/, '/');
+  const basePath = '/';
   const date = photoState.selectedDate;
   const view = photoState.selectedView;
 
