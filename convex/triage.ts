@@ -63,6 +63,7 @@ export const upsert = mutation({
     summary: v.string(),
     suggestedAction: v.optional(v.string()),
     draftReply: v.optional(v.string()),
+    confidence: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db
@@ -105,6 +106,7 @@ export const batchUpsert = mutation({
         summary: v.string(),
         suggestedAction: v.optional(v.string()),
         draftReply: v.optional(v.string()),
+    confidence: v.optional(v.string()),
       }),
     ),
   },

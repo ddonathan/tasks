@@ -170,6 +170,7 @@ export default defineSchema({
     snoozeUntil: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
+    confidence: v.optional(v.string()),
   })
     .index("by_sourceId", ["sourceId"])
     .index("by_status", ["status"])

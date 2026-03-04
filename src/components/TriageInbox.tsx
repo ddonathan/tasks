@@ -6,13 +6,15 @@ import {
   ChevronDown,
   ChevronRight,
   Clock,
+  HelpCircle,
   Mail,
   MessageSquare,
   Paperclip,
   Send,
-  Trash2,
+  ShieldCheck,
   Users,
   X,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { api } from "../../convex/_generated/api";
@@ -68,6 +70,7 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
   const SourceIcon = SOURCE_ICONS[item.source] ?? Mail;
   const priorityColor = PRIORITY_COLORS[item.priority] ?? "#6b7280";
   const actionCfg = ACTION_CONFIG[item.suggestedAction ?? ""] ?? null;
+  const isConfident = item.confidence === "high";
 
   const handleAct = async (action: string, snoozeUntil?: number) => {
     setSending(true);
@@ -93,8 +96,7 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
   const currentDraft = editedDraft !== null ? editedDraft : item.draftReply;
 
   return (
-    <div className="triage-card">
-      {/* Row 1: metadata */}
+    <div className={`triage-card ${isConfident ? "triage-card-confident" : "triage-card-unsure"}`}>
       <div className="triage-card-header" onClick={() => setExpanded(!expanded)}>
         <span className="triage-priority-badge" style={{ backgroundColor: priorityColor }}>
           {PRIORITY_LABELS[item.priority] ?? item.priority}
@@ -107,12 +109,12 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
         {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
       </div>
 
-      {/* Row 2: subject */}
       <div className="triage-card-subject">{item.subject}</div>
 
-      {/* Row 3: Mira's recommendation — always visible */}
       <div className="triage-recommendation">
-        <span className="triage-rec-label">Mira says:</span>
+        <span className={`triage-rec-label ${isConfident ? "" : "triage-rec-unsure"}`}>
+          {isConfident ? "Mira says:" : "Mira's best guess:"}
+        </span>
         {actionCfg && (
           <span className="triage-rec-action" style={{ color: actionCfg.color }}>
             <actionCfg.icon size={13} /> {actionCfg.label}
@@ -121,14 +123,12 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
         <span className="triage-rec-summary">{item.summary}</span>
       </div>
 
-      {/* Draft preview (collapsed) */}
       {!expanded && item.draftReply && (
         <div className="triage-draft-peek" onClick={() => setExpanded(true)}>
           ✏️ Draft ready — tap to review
         </div>
       )}
 
-      {/* Expanded details */}
       {expanded && (
         <div className="triage-card-expanded">
           {item.bodyPreview && (
@@ -136,7 +136,6 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
               <p>{item.bodyPreview}</p>
             </div>
           )}
-
           {item.draftReply && (
             <div className="triage-draft">
               <div className="triage-draft-label">Draft Reply — edit or approve as-is</div>
@@ -151,26 +150,10 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
         </div>
       )}
 
-      {/* Actions — always visible */}
       <div className="triage-card-actions">
         {item.draftReply && (
-          <button
-            type="button"
-            className="triage-btn triage-btn-primary"
-            onClick={() => handleAct("reply")}
-            disabled={sending}
-          >
+          <button type="button" className="triage-btn triage-btn-primary" onClick={() => handleAct("reply")} disabled={sending}>
             <Send size={13} /> {editedDraft !== null && editedDraft !== item.draftReply ? "Send Edited" : "Approve Draft"}
-          </button>
-        )}
-        {!item.draftReply && item.suggestedAction === "reply" && (
-          <button
-            type="button"
-            className="triage-btn triage-btn-primary"
-            onClick={() => setExpanded(true)}
-            disabled={sending}
-          >
-            <Send size={13} /> Reply
           </button>
         )}
         <button type="button" className="triage-btn" onClick={() => handleAct("archive")} disabled={sending}>
@@ -211,7 +194,6 @@ function getNextMorningMs(): number {
 
 function MetricsPanel() {
   const metrics = useQuery(api.triage.metrics, { days: 30 });
-
   if (!metrics || metrics.total === 0) return null;
 
   return (
@@ -250,6 +232,9 @@ export default function TriageInbox() {
     priority: filter === "all" ? undefined : filter,
   });
   const stats = useQuery(api.triage.stats, {});
+
+  const confident = items?.filter((i) => i.confidence === "high") ?? [];
+  const needsReview = items?.filter((i) => i.confidence !== "high") ?? [];
 
   const filters: { key: PriorityFilter; label: string }[] = [
     { key: "all", label: "All" },
@@ -307,7 +292,29 @@ export default function TriageInbox() {
             <p>Inbox zero</p>
           </div>
         ) : (
-          items.map((item) => <TriageCard key={item._id} item={item} />)
+          <>
+            {confident.length > 0 && (
+              <div className="triage-section">
+                <div className="triage-section-header triage-section-confident">
+                  <ShieldCheck size={16} /> I'm confident on these ({confident.length})
+                </div>
+                {confident.map((item) => (
+                  <TriageCard key={item._id} item={item} />
+                ))}
+              </div>
+            )}
+
+            {needsReview.length > 0 && (
+              <div className="triage-section">
+                <div className="triage-section-header triage-section-review">
+                  <HelpCircle size={16} /> Needs your judgment ({needsReview.length})
+                </div>
+                {needsReview.map((item) => (
+                  <TriageCard key={item._id} item={item} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

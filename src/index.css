@@ -2074,3 +2074,42 @@ a:hover {
 .triage-draft-peek:hover {
   opacity: 1;
 }
+
+/* ========== Triage Sections ========== */
+
+.triage-section {
+  margin-bottom: 1.5rem;
+}
+
+.triage-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.4rem 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border, #2e2e3e);
+}
+
+.triage-section-confident {
+  color: #22c55e;
+}
+
+.triage-section-review {
+  color: #f59e0b;
+}
+
+.triage-card-confident {
+  border-left: 3px solid #22c55e;
+}
+
+.triage-card-unsure {
+  border-left: 3px solid #f59e0b;
+}
+
+.triage-rec-unsure {
+  color: #f59e0b !important;
+}
