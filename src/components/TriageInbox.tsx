@@ -40,6 +40,13 @@ const SOURCE_ICONS: Record<string, typeof Mail> = {
   slack: Users,
 };
 
+const ACTION_CONFIG: Record<string, { icon: typeof Mail; label: string; color: string }> = {
+  reply: { icon: Send, label: "Reply", color: "#7c3aed" },
+  archive: { icon: Archive, label: "Archive", color: "#6b7280" },
+  delegate: { icon: ArrowRight, label: "Delegate", color: "#f59e0b" },
+  "follow-up": { icon: Clock, label: "Follow Up", color: "#3b82f6" },
+};
+
 function timeAgo(ts: number): string {
   const diff = Date.now() - ts;
   const mins = Math.floor(diff / 60000);
@@ -60,6 +67,7 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
 
   const SourceIcon = SOURCE_ICONS[item.source] ?? Mail;
   const priorityColor = PRIORITY_COLORS[item.priority] ?? "#6b7280";
+  const actionCfg = ACTION_CONFIG[item.suggestedAction ?? ""] ?? null;
 
   const handleAct = async (action: string, snoozeUntil?: number) => {
     setSending(true);
@@ -86,6 +94,7 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
 
   return (
     <div className="triage-card">
+      {/* Row 1: metadata */}
       <div className="triage-card-header" onClick={() => setExpanded(!expanded)}>
         <span className="triage-priority-badge" style={{ backgroundColor: priorityColor }}>
           {PRIORITY_LABELS[item.priority] ?? item.priority}
@@ -93,13 +102,33 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
         <SourceIcon size={14} className="triage-source-icon" />
         <span className="triage-from">{item.from}</span>
         {item.hasAttachments && <Paperclip size={12} className="triage-attachment" />}
+        {item.category && <span className="triage-category">{item.category}</span>}
         <span className="triage-time">{timeAgo(item.receivedAt)}</span>
         {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
       </div>
 
+      {/* Row 2: subject */}
       <div className="triage-card-subject">{item.subject}</div>
-      <div className="triage-card-summary">{item.summary}</div>
 
+      {/* Row 3: Mira's recommendation — always visible */}
+      <div className="triage-recommendation">
+        <span className="triage-rec-label">Mira says:</span>
+        {actionCfg && (
+          <span className="triage-rec-action" style={{ color: actionCfg.color }}>
+            <actionCfg.icon size={13} /> {actionCfg.label}
+          </span>
+        )}
+        <span className="triage-rec-summary">{item.summary}</span>
+      </div>
+
+      {/* Draft preview (collapsed) */}
+      {!expanded && item.draftReply && (
+        <div className="triage-draft-peek" onClick={() => setExpanded(true)}>
+          ✏️ Draft ready — tap to review
+        </div>
+      )}
+
+      {/* Expanded details */}
       {expanded && (
         <div className="triage-card-expanded">
           {item.bodyPreview && (
@@ -108,21 +137,9 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
             </div>
           )}
 
-          {item.suggestedAction && (
-            <div className="triage-suggested">
-              Recommended: <strong>{item.suggestedAction}</strong>
-              {item.category && (
-                <>
-                  {" · "}
-                  <span className="triage-category">{item.category}</span>
-                </>
-              )}
-            </div>
-          )}
-
           {item.draftReply && (
             <div className="triage-draft">
-              <div className="triage-draft-label">Draft Reply — edit below or approve as-is</div>
+              <div className="triage-draft-label">Draft Reply — edit or approve as-is</div>
               <textarea
                 className="triage-draft-editor"
                 value={currentDraft ?? ""}
@@ -134,6 +151,7 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
         </div>
       )}
 
+      {/* Actions — always visible */}
       <div className="triage-card-actions">
         {item.draftReply && (
           <button
@@ -141,16 +159,25 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
             className="triage-btn triage-btn-primary"
             onClick={() => handleAct("reply")}
             disabled={sending}
-            title="Approve & send draft"
           >
             <Send size={13} /> {editedDraft !== null && editedDraft !== item.draftReply ? "Send Edited" : "Approve Draft"}
           </button>
         )}
-        <button type="button" className="triage-btn" onClick={() => handleAct("archive")} disabled={sending} title="Archive">
+        {!item.draftReply && item.suggestedAction === "reply" && (
+          <button
+            type="button"
+            className="triage-btn triage-btn-primary"
+            onClick={() => setExpanded(true)}
+            disabled={sending}
+          >
+            <Send size={13} /> Reply
+          </button>
+        )}
+        <button type="button" className="triage-btn" onClick={() => handleAct("archive")} disabled={sending}>
           <Archive size={13} /> Archive
         </button>
         <div className="triage-snooze-wrapper">
-          <button type="button" className="triage-btn" onClick={() => setShowSnooze(!showSnooze)} title="Snooze">
+          <button type="button" className="triage-btn" onClick={() => setShowSnooze(!showSnooze)}>
             <Clock size={13} /> Snooze
           </button>
           {showSnooze && (
@@ -163,10 +190,10 @@ function TriageCard({ item }: { item: Doc<"triage"> }) {
             </div>
           )}
         </div>
-        <button type="button" className="triage-btn" onClick={() => handleAct("delegate")} disabled={sending} title="Delegate">
-          <ArrowRight size={13} /> Delegate
+        <button type="button" className="triage-btn" onClick={() => handleAct("delegate")} disabled={sending}>
+          <ArrowRight size={13} />
         </button>
-        <button type="button" className="triage-btn triage-btn-danger" onClick={() => handleAct("dismiss")} disabled={sending} title="Dismiss">
+        <button type="button" className="triage-btn triage-btn-danger" onClick={() => handleAct("dismiss")} disabled={sending}>
           <X size={13} />
         </button>
       </div>

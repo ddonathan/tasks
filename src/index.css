@@ -2031,3 +2031,46 @@ a:hover {
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
+
+/* ========== Triage Recommendation Row ========== */
+
+.triage-recommendation {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.4rem 0 0.3rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.triage-rec-label {
+  font-weight: 600;
+  color: var(--accent, #7c3aed);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.triage-rec-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.triage-rec-summary {
+  color: var(--text-secondary, #a0a0b0);
+}
+
+.triage-draft-peek {
+  font-size: 0.75rem;
+  color: var(--accent, #7c3aed);
+  cursor: pointer;
+  padding: 0.3rem 0;
+  opacity: 0.8;
+}
+
+.triage-draft-peek:hover {
+  opacity: 1;
+}
